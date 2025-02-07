@@ -1,6 +1,6 @@
-Docker Compose file for Quick Setup of a Laravel Project with database management by phpmyadmin..
+# Docker Compose file for Quick Setup of a Laravel Project with database management by phpmyadmin..
 
-# Project Setup Guide
+## Project Setup Guide
 
 This guide will walk you through the steps to set up and run the project using Docker.
 
