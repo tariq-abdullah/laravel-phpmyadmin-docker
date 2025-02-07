@@ -5,6 +5,10 @@
 #--------------------------------------------------------------------------#
 version: "3.8"
 
+networks:
+    laravel_network:
+        driver: bridge
+
 services:
     app:
         image: php:8.1-fpm
@@ -16,7 +20,7 @@ services:
         depends_on:
             - db
         networks:
-            - ${PROJECT_NAME}_network
+            - laravel_network
 
     webserver:
         image: nginx:alpine
@@ -31,7 +35,7 @@ services:
         depends_on:
             - app
         networks:
-            - ${PROJECT_NAME}_network
+            - laravel_network
 
 #--------------------------------------------------------------------------#
 #                               M Y S Q L                                  #
@@ -51,7 +55,7 @@ services:
             MYSQL_PASSWORD: ${PROJECT_NAME}
             MYSQL_ROOT_PASSWORD: ${PROJECT_NAME}
         networks:
-            - ${PROJECT_NAME}_network
+            - laravel_network
 
 #--------------------------------------------------------------------------#
 #                         P H P M Y A D M I N                              #
@@ -68,8 +72,4 @@ services:
         depends_on:
             - db
         networks:
-            - ${PROJECT_NAME}_network
-
-networks:
-    ${PROJECT_NAME}_network:
-        driver: bridge
+            - laravel_network
