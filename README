@@ -1,6 +1,6 @@
 *How to use*
 
-    - edit .env and update project name
+    - edit or create .env and update project name
     - run docker-compose up
     - Access laravel at localhost:80
     - Access phpmyadmin at localhost:81
