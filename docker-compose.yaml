@@ -1,0 +1,75 @@
+#--------------------------------------------------------------------------#
+#--------------------------------------------------------------------------#
+#                          ${PROJECT_NAME}                                #
+#--------------------------------------------------------------------------#
+#--------------------------------------------------------------------------#
+version: "3.8"
+
+services:
+    app:
+        image: php:8.1-fpm
+        container_name: ${PROJECT_NAME}_app
+        restart: always
+        working_dir: /var/www
+        volumes:
+            - ./:/var/www
+        depends_on:
+            - db
+        networks:
+            - ${PROJECT_NAME}_network
+
+    webserver:
+        image: nginx:alpine
+        container_name: ${PROJECT_NAME}_webserver
+        restart: always
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - ./:/var/www
+            - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+        depends_on:
+            - app
+        networks:
+            - ${PROJECT_NAME}_network
+
+#--------------------------------------------------------------------------#
+#                               M Y S Q L                                  #
+#--------------------------------------------------------------------------#              
+    db:
+        image: mariadb:10.5.5
+        container_name: ${PROJECT_NAME}_db
+        restart: always
+        ports:
+            - "3306:3306"
+        volumes:
+            - ./database/mysql:/var/lib/mysql
+            - ./database/logs/mysql:/var/log/mysql
+        environment:
+            MYSQL_DATABASE: ${PROJECT_NAME}
+            MYSQL_USER: root
+            MYSQL_PASSWORD: ${PROJECT_NAME}
+            MYSQL_ROOT_PASSWORD: ${PROJECT_NAME}
+        networks:
+            - ${PROJECT_NAME}_network
+
+#--------------------------------------------------------------------------#
+#                         P H P M Y A D M I N                              #
+#--------------------------------------------------------------------------#             
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin:5.0.2
+        container_name: ${PROJECT_NAME}_phpmyadmin
+        restart: always
+        environment:
+            PMA_HOST: db
+            PMA_PORT: 3306
+        ports:
+            - "81:80"
+        depends_on:
+            - db
+        networks:
+            - ${PROJECT_NAME}_network
+
+networks:
+    ${PROJECT_NAME}_network:
+        driver: bridge
